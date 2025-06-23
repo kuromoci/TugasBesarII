@@ -1,0 +1,21 @@
+# Python-specific ignores
+__pycache__/
+*.pyc
+.Python/
+env/
+venv/
+tempCodeRunnerFile.py
+
+# Node.js specific ignores
+node_modules/
+.pnpm-store/ # If you use pnpm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm/
+
+# OS-specific ignores
+.DS_Store
+.Trashes
+Thumbs.db
+.vercel

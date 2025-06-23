@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb" 
+      }
+    },
+    {
+      "src": "css/**",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "css"
+      }
+    },
+    {
+      "src": "html/**",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "html"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/html/(.*)",
+      "dest": "/html/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/index.py"
+    }
+  ],
+  "env": {
+    "FLASK_SECRET_KEY": "@flask_secret_key",
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_KEY": "@supabase_key",
+    "APP_USERNAME": "@app_username",
+    "APP_PASSWORD": "@app_password",
+    "ESP32_API_KEY": "@esp32_api_key" 
+  }
+}

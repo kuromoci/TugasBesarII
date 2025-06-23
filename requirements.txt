@@ -1,0 +1,3 @@
+Flask==3.13.3
+requests==2.32.4
+supabase==2.15.3

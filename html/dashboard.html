@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Smart Energy Monitoring</title>
+  
+  <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet"> 
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6TaYgqgpfmYVft+tvUfpecsGaQfaIIkwdVNnSfNTw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+</head>
+<body class="dashboard-body"> <nav class="navbar">
+    <div class="navbar-brand">
+      <h1>Smart Energy Monitoring</h1>
+    </div>
+    <div class="navbar-links">
+      <a href="{{ url_for('logout') }}" class="logout-link">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </a>
+    </div>
+  </nav>
+
+  <div class="main-content"> 
+    <h1 class="dashboard-title">DASHBOARD MONITORING</h1>
+    <div class="dashboard-grid"> <div class="dashboard-card">
+        <span class="card-label">VOLTAGE</span>
+        <h2 id="liveVoltage" class="voltage-text">{{ data.load_voltage | default(0.0) | round(2) }} V</h2>
+        <span class="label">Battery Voltage</span>
+      </div>
+      
+      <div class="dashboard-card">
+        <span class="card-label">CURRENT</span>
+        <h2 id="liveCurrent" class="current-text">{{ data.current_mA | default(0.0) | round(2) }} mA</h2>
+        <span class="label">Battery Current</span>
+      </div>
+      
+      <div class="dashboard-card">
+        <span class="card-label">POWER</span>
+        <h2 id="livePower" class="power-text">{{ data.power_W | default(0.0) | round(2) }} W</h2>
+        <span class="label">Battery Power</span>
+      </div>
+      
+      <div class="control-section-full-row">
+        
+        <div class="control-card">
+          <h1 class="control-card-title">THRESHOLD CONTROL (Digipot)</h1>
+          <form id="digipotControlForm" class="control-form">
+            <div class="form-group">
+                <label for="digipot_slider" class="control-label">Wiper Position (0-99):</label>
+                <input type="range" id="digipot_slider" name="digipot_step"
+                        min="0" max="99" step="1"
+                        value="{{ data.target_digipot_step | default(50) }}" class="slider-input">
+                <output id="digipotOutput" class="digipot-text range-output">{{ data.target_digipot_step | default(50) | round(0) }}</output>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                Set Digipot
+            </button>
+            <span id="digipotControlMessage" class="message-span"></span>
+          </form>
+        </div>
+        
+        <div class="control-card">
+            <h1 class="control-card-title">POWER CONTROL (Relay)</h1>
+            <div class="relay-control-content">
+                <span id="relayStatusDisplay" class="relay-status 
+                    {% if data.relay_status == 'ON' %} relay-status-on
+                    {% else %} relay-status-off {% endif %}">
+                    STATUS: {{ data.relay_status | default('OFF') }}
+                </span>
+                <div class="relay-buttons">
+                    <button onclick="controlRelay('on')" class="relay-on-btn">
+                        Turn ON
+                    </button>
+                    <button onclick="controlRelay('off')" class="relay-off-btn">
+                        Turn OFF
+                    </button>
+                </div>
+            </div>
+            <span id="relayControlMessage" class="message-span"></span>
+        </div>
+      </div> </div> </div> <footer class="footer">
+    <div class="footer-content">
+      Tugas Besar - Pemrograman II
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script> 
+  <script>
+    // ELEMENT REFERENCES (Diubah agar konsisten dengan ID/kelas baru)
+    const dataDisplayElements = {
+        liveVoltage: document.getElementById('liveVoltage'),
+        liveCurrent: document.getElementById('liveCurrent'),
+        livePower: document.getElementById('livePower'), 
+        relayStatusDisplay: document.getElementById('relayStatusDisplay'),
+        digipotOutput: document.getElementById('digipotOutput'), 
+        digipot_slider: document.getElementById('digipot_slider'), 
+    };
+    
+    const digipotControlMessage = document.getElementById('digipotControlMessage'); // Ubah id
+    const relayControlMessage = document.getElementById('relayControlMessage');
+
+    // CHART.JS SETUP (Tetap sama, karena grafik masih ada di kode HTML Anda)
+    const ctx = document.getElementById('energyChart').getContext('2d');
+    const chartData = {
+        labels: [], 
+        datasets: [
+            {
+                label: 'Voltage (V)', data: [], borderColor: 'rgb(59, 130, 246)', 
+                backgroundColor: 'rgba(59, 130, 246, 0.2)', tension: 0.1, fill: false, yAxisID: 'yVoltage'
+            },
+            {
+                label: 'Current (mA)', data: [], borderColor: 'rgb(34, 197, 94)', 
+                backgroundColor: 'rgba(34, 197, 94, 0.2)', tension: 0.1, fill: false, yAxisID: 'yCurrent'
+            },
+            {
+                label: 'Power (W)', data: [], borderColor: 'rgb(245, 158, 11)', 
+                backgroundColor: 'rgba(245, 158, 11, 0.2)', tension: 0.1, fill: false, yAxisID: 'yPower'
+            }
+        ]
+    };
+
+    const energyChart = new Chart(ctx, {
+        type: 'line', data: chartData,
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'time', time: { unit: 'second', displayFormats: { second: 'HH:mm:ss' } },
+                    title: { display: true, text: 'Time', color: '#A0AEC0' },
+                    ticks: { color: '#A0AEC0' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                },
+                yVoltage: {
+                    type: 'linear', position: 'left',
+                    title: { display: true, text: 'Voltage (V)', color: '#3B82F6' },
+                    min: 0, max: 10, ticks: { color: '#A0AEC0' }, grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                },
+                yCurrent: {
+                    type: 'linear', position: 'right',
+                    title: { display: true, text: 'Current (mA)', color: '#22C55E' },
+                    min: 0, max: 1500, ticks: { color: '#A0AEC0' }, grid: { drawOnChartArea: false, color: 'rgba(255, 255, 255, 0.1)' }
+                },
+                yPower: {
+                    type: 'linear', position: 'right',
+                    title: { display: true, text: 'Power (W)', color: '#F59E0B' },
+                    min: 0, max: 10, ticks: { color: '#A0AEC0' }, grid: { drawOnChartArea: false, color: 'rgba(255, 255, 255, 0.1)' }
+                }
+            },
+            plugins: { legend: { labels: { color: '#A0AEC0' } } }
+        }
+    });
+
+    // Handle form submission for output control (Digipot)
+    document.getElementById('digipotControlForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); 
+        const formData = new FormData(this);
+        const dataToSend = { digipot_step: parseFloat(formData.get('digipot_step')) }; // Mengambil nilai digipot_step
+        await sendCommand('/update_output_params', dataToSend, digipotControlMessage); // Kirim ke endpoint Flask
+    });
+
+    // Handle relay control buttons
+    async function controlRelay(status) {
+        const dataToSend = { status: status };
+        await sendCommand('/control_relay', dataToSend, relayControlMessage);
+    }
+
+    // Generic function to send commands to Flask API
+    async function sendCommand(endpoint, data, messageElement) {
+        messageElement.textContent = 'Sending...';
+        messageElement.classList.add('message-sending'); 
+
+        try {
+            const response = await fetch(`http://${window.location.host}${endpoint}`, { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            if (response.ok) {
+                messageElement.textContent = result.message || 'Command sent successfully!';
+                messageElement.classList.remove('message-sending');
+                messageElement.classList.add('message-success'); 
+            } else {
+                messageElement.textContent = 'Error: ' + (result.error || response.statusText);
+                messageElement.classList.remove('message-sending');
+                messageElement.classList.add('message-error'); 
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            messageElement.textContent = 'Network error. Could not connect to Vercel API.';
+            messageElement.classList.remove('message-sending');
+            messageElement.classList.add('message-error'); 
+        }
+        setTimeout(() => messageElement.textContent = '', 3000); 
+    }
+
+    // Function to fetch live data from Flask backend regularly
+    async function getLiveData() {
+        try {
+            const response = await fetch(`http://${window.location.host}/get_live_data`); 
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            
+            // Update live data display
+            dataDisplayElements.liveVoltage.textContent = (data.load_voltage ?? 0.0).toFixed(2) + ' V'; 
+            dataDisplayElements.liveCurrent.textContent = (data.current_mA ?? 0.0).toFixed(2) + ' mA';
+            dataDisplayElements.livePower.textContent = (data.power_W ?? 0.0).toFixed(2) + ' W'; 
+            
+            // Update relay status display
+            dataDisplayElements.relayStatusDisplay.textContent = 'STATUS: ' + data.relay_status;
+            dataDisplayElements.relayStatusDisplay.classList.remove('relay-status-on', 'relay-status-off');
+            if (data.relay_status === 'ON') {
+                dataDisplayElements.relayStatusDisplay.classList.add('relay-status-on');
+            } else {
+                dataDisplayElements.relayStatusDisplay.classList.add('relay-status-off');
+            }
+
+            const targetDigipotStep = data.target_digipot_step ?? 50;
+
+            // Update slider output displays and position (Digipot)
+            dataDisplayElements.digipotOutput.value = parseFloat(targetDigipotStep).toFixed(0); 
+            dataDisplayElements.digipot_slider.value = targetDigipotStep; 
+            
+            // Add data to chart
+            const now = new Date();
+            chartData.labels.push(now);
+            chartData.datasets[0].data.push(data.load_voltage);
+            chartData.datasets[1].data.push(data.current_mA);
+            chartData.datasets[2].data.push(data.power_W); 
+            
+            // Batasi jumlah data di grafik untuk performa
+            const maxDataPoints = 30; 
+            if (chartData.labels.length > maxDataPoints) {
+                chartData.labels.shift();
+                chartData.datasets[0].data.shift();
+                chartData.datasets[1].data.shift();
+                chartData.datasets[2].data.shift();
+            }
+            
+            energyChart.update(); 
+            
+        } catch (error) {
+            console.error("Could not fetch live data:", error);
+            // Set display to N/A or show error
+            for (let key in dataDisplayElements) {
+                if (dataDisplayElements[key].id === 'liveVoltage' || dataDisplayElements[key].id === 'liveCurrent' || dataDisplayElements[key].id === 'livePower') {
+                    dataDisplayElements[key].textContent = 'N/A';
+                } else if (dataDisplayElements[key].id === 'relayStatusDisplay') {
+                    dataDisplayElements[key].textContent = 'STATUS: OFFLINE';
+                    dataDisplayElements[key].classList.remove('relay-status-on');
+                    dataDisplayElements[key].classList.add('relay-status-off');
+                } else if (dataDisplayElements[key].id === 'digipotOutput') { 
+                    dataDisplayElements[key].value = 'N/A';
+                } else if (dataDisplayElements[key].id === 'digipot_slider') {
+                    dataDisplayElements[key].value = 50; 
+                }
+            }
+        }
+    }
+
+    // Set interval to fetch data every 3 seconds
+    setInterval(getLiveData, 3000); 
+    getLiveData(); 
+
+    // Initial updates for slider output text when page loads
+    const initialDigipotSliderValue = document.getElementById('digipot_slider').value;
+    if (initialDigipotSliderValue) { 
+        dataDisplayElements.digipotOutput.value = parseFloat(initialDigipotSliderValue).toFixed(0);
+    } else {
+        dataDisplayElements.digipotOutput.value = '50'; 
+    }
+  </script>
+</body>
+</html>

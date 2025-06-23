@@ -1,0 +1,378 @@
+/* css/style.css */
+
+/* General Body Styles */
+body {
+    font-family: 'Inter', sans-serif; /* Fallback font */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* min-h-screen */
+    background-color: #f0f2f5; /* Background body */
+    color: #333; /* Default text color */
+    overflow-x: hidden; /* Mencegah scroll horizontal */
+}
+
+/* Konversi kelas spesifik dari HTML: */
+/* Contoh untuk dashboard.html */
+.dashboard-body { /* Contoh kelas kustom */
+    background-color: #292524; /* stone-900 */
+    color: #e0e0e0; /* neutral-200 */
+    font-family: 'Inter', sans-serif;
+    overflow: hidden; /* overflow-hidden */
+    display: flex; /* flex */
+    flex-direction: column; /* flex-col */
+    min-height: 100vh; /* min-h-svh */
+}
+
+.navbar { /* nav */
+    display: flex; /* flex */
+    flex-direction: row; /* flex-row */
+    justify-content: space-between; /* justify-between */
+    align-items: center; /* items-center */
+    color: #e0e0e0; /* text-neutral-200 */
+    background-color: #171717; /* bg-neutral-900 */
+    height: 60px; /* h-15 */
+    padding: 8px 16px; /* px-4 py-2 */
+}
+
+.navbar-brand h1 { /* font-bold text-2xl */
+    font-weight: bold;
+    font-size: 24px;
+    margin: 0; /* Hapus margin default h1 */
+}
+
+.navbar-links { /* flex justify-center items-center space-x-4 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px; /* space-x-4 */
+}
+
+.logout-link { /* text-neutral-200 hover:text-gray-400 text-2xl transition duration-200 ease-in-out */
+    color: #e0e0e0;
+    font-size: 24px;
+    transition: color 0.2s ease-in-out;
+    text-decoration: none; /* Hapus underline default link */
+}
+.logout-link:hover {
+    color: #9ca3af;
+}
+
+/* Main Content Area */
+.main-content { /* bg-neutral-800 flex-grow pt-10 text-center text-neutral-200 font-bold overflow-y-auto */
+    background-color: #3b3b3b; /* bg-neutral-800 */
+    flex-grow: 1; /* flex-grow */
+    padding-top: 40px; /* pt-10 */
+    text-align: center;
+    color: #e0e0e0; /* text-neutral-200 */
+    font-weight: bold;
+    overflow-y: auto; /* overflow-y-auto */
+}
+
+.dashboard-title { /* text-3xl mb-6 */
+    font-size: 30px;
+    margin-bottom: 24px;
+}
+
+.dashboard-grid { /* grid grid-cols-6 gap-x-10 gap-y-4 px-20 w-full h-160 mx-auto */
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolom untuk kartu data */
+    gap: 40px; /* gap-x-10 */
+    row-gap: 16px; /* gap-y-4 */
+    padding: 0 80px; /* px-20 */
+    width: 100%;
+    max-width: 1200px; /* Lebar maksimal dashboard */
+    margin: 0 auto; /* mx-auto */
+    height: 640px; /* h-160 */
+    box-sizing: border-box; /* Pastikan padding dihitung dalam ukuran */
+}
+
+.dashboard-card { /* col-span-2 bg-neutral-900 w-auto h-50 rounded-2xl pt-4 flex flex-col justify-between items-center p-4 */
+    background-color: #171717; /* bg-neutral-900 */
+    height: 200px; /* h-50 */
+    border-radius: 16px; /* rounded-2xl */
+    padding: 16px; /* p-4 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.card-label { /* text-xl */
+    font-size: 20px;
+}
+
+.dashboard-card h2 { /* text-5xl font-bold my-auto */
+    font-size: 48px;
+    font-weight: bold;
+    margin: auto 0; /* Untuk my-auto (pusat vertikal) */
+}
+
+.label { /* text-sm text-gray-400 */
+    font-size: 14px;
+    color: #9ca3af;
+}
+
+/* Warna Teks untuk Nilai */
+.voltage-text { color: #60a5fa; } /* text-blue-400 */
+.current-text { color: #4ade80; } /* text-green-400 */
+.power-text { color: #fbbf24; } /* text-amber-400 */
+.digipot-text { color: #a855f7; } /* text-purple-400 */
+
+/* Control Section (Digipot & Relay) */
+.control-section-full-row { /* grid-column: span 3 / span 3; (untuk grid 3 kolom) */
+    grid-column: span 3 / span 3; /* Ini akan membuat control section menempati seluruh lebar grid (3 kolom) */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Digipot dan Relay berdampingan */
+    gap: 40px; /* gap-x-10 */
+    background-color: #171717;
+    padding: 20px;
+    padding-bottom: 30px;
+    border-radius: 16px;
+    box-sizing: border-box;
+}
+
+.control-card { /* Digipot & Relay cards */
+    background-color: #171717; /* Default dari container */
+    height: 100%; /* h-full */
+    border-radius: 16px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center; /* Untuk memusatkan konten jika justify-content: center */
+    box-sizing: border-box;
+}
+.control-card-title { /* h1 dalam control-card */
+    font-size: 20px; /* text-xl */
+    margin-bottom: 16px; /* mb-4 */
+    text-align: center;
+}
+
+/* Control Form (untuk digipot) */
+.control-form { /* flex flex-col flex-grow justify-around */
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-around;
+    width: 100%; /* Agar form mengisi lebar card */
+}
+.form-group { /* mb-4 */
+    margin-bottom: 16px;
+}
+.control-label { /* block text-neutral-300 text-lg font-medium mb-2 */
+    display: block;
+    color: #d4d4d4; /* text-neutral-300 */
+    font-size: 18px;
+    font-weight: 500; /* font-medium */
+    margin-bottom: 8px;
+}
+
+/* Slider Input */
+.slider-input { /* w-full */
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: #d1d5db; /* gray-300 */
+    border-radius: 5px;
+    outline: none;
+    transition: opacity 0.2s;
+}
+.slider-input::-webkit-slider-thumb { /* thumb */
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3b82f6; /* blue-500 */
+    cursor: pointer;
+}
+.slider-input::-moz-range-thumb { /* thumb */
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #3b82f6; /* blue-500 */
+    cursor: pointer;
+}
+.range-output { /* text-blue-400 text-xl font-bold mt-2 */
+    color: #60a5fa;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 8px;
+    display: block;
+}
+
+/* Submit Button */
+.submit-btn { /* bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out */
+    background-color: #2563eb;
+    color: white;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+    width: 100%; /* Agar tombol memenuhi lebar form */
+}
+.submit-btn:hover { background-color: #1d4ed8; }
+
+/* Message Span */
+.message-span { /* text-xs mt-2 */
+    font-size: 12px;
+    margin-top: 8px;
+    display: block;
+    text-align: center; /* Tambahan untuk pusat teks */
+}
+.message-sending { color: #f59e0b; } /* text-yellow-500 */
+.message-success { color: #22c55e; } /* text-green-500 */
+.message-error { color: #ef4444; } /* text-red-500 */
+
+/* Relay Control Section */
+.relay-control-content { /* flex flex-col items-center gap-4 my-auto */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px; /* gap-4 */
+    margin: auto 0; /* my-auto */
+}
+.relay-status { /* text-xl font-bold mb-2 px-4 py-2 rounded-full */
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    padding: 8px 16px;
+    border-radius: 9999px; /* rounded-full */
+}
+.relay-status-on { background-color: #DCFCE7; color: #15803D; } /* green-100, green-800 */
+.relay-status-off { background-color: #FEE2E2; color: #B91C1C; } /* red-100, red-800 */
+
+.relay-buttons { /* flex space-x-4 */
+    display: flex;
+    gap: 16px; /* space-x-4 */
+}
+.relay-on-btn { /* relay-on-btn text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out */
+    background-color: #22C55E;
+    color: white;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+}
+.relay-on-btn:hover { background-color: #16A34A; }
+.relay-off-btn { /* relay-off-btn text-white font-bold py-2 px-4 rounded-lg transition duration-200 ease-in-out */
+    background-color: #EF4444;
+    color: white;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+}
+.relay-off-btn:hover { background-color: #DC2626; }
+
+/* Footer */
+.footer { /* bottom-0 absolute bg-neutral-900 w-full h-15 flex items-center justify-center */
+  background-color: #171717; /* neutral-900 */
+  width: 100%;
+  height: 60px; /* h-15 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box; /* Pastikan padding dihitung dalam tinggi */
+}
+.footer-content { /* text-center text-neutral-200 pt-1 */
+  text-align: center;
+  color: #e0e0e0; /* neutral-200 */
+  padding-top: 4px; /* pt-1 (approx) */
+}
+
+/* Contoh untuk login.html (Anda harus buat file css/login.css jika terpisah) */
+.login-body { /* Contoh kelas body kustom */
+    background-color: #e0e0e0; /* bg-zinc-200 */
+    font-family: 'Inter', sans-serif; /* font-[inter] */
+    display: flex; /* flex */
+    align-items: center; /* items-center */
+    justify-content: center; /* justify-center */
+    min-height: 100vh; /* min-h-screen */
+}
+
+.login-container { /* container w-110 h-[702px] pt-8 mx-auto bg-neutral-200 mt-36 shadow-xl shadow-neutral-400 rounded-xl bg-blend-hard-light bg-no-repeat bg-cover sm:w-124 sm:pb-12 md:w-144 lg:w-170 xl:w-236 */
+    width: 440px; /* w-110 (110 * 4px) */
+    height: 702px; /* h-[702px] */
+    padding-top: 32px; /* pt-8 */
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #e0e0e0; /* bg-neutral-200 */
+    margin-top: 144px; /* mt-36 */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+    border-radius: 12px; /* rounded-xl */
+    /* Anda bisa menambahkan properti background-image, dll. sesuai desain Anda */
+    box-sizing: border-box;
+}
+
+.login-container h1 { /* text-2xl text-neutral-800 font-bold px-8 text-center mb-6 */
+    font-size: 24px;
+    color: #404040;
+    font-weight: bold;
+    padding-left: 32px;
+    padding-right: 32px;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.login-form-group { /* mb-6 atau mb-8 */
+    margin-bottom: 24px;
+}
+.login-label { /* block text-gray-800 text-xl font-semibold mb-2 */
+    display: block;
+    color: #404040;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.login-input { /* w-full px-4 py-3 rounded-md border bg-slate-100 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 */
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background-color: #f1f5f9;
+    outline: none;
+}
+.login-input:focus {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* focus:ring-2 focus:ring-blue-500 */
+}
+
+.login-submit-btn { /* w-40 h-10 bg-blue-500 text-slate-200 text-center font-bold px-4 py-2 block mx-auto rounded-md hover:bg-blue-600 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 */
+    width: 160px;
+    height: 40px;
+    background-color: #3b82f6;
+    color: #e2e8f0;
+    text-align: center;
+    font-weight: bold;
+    padding: 8px 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 6px;
+    transition: background-color 0.3s ease-in-out;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+.login-submit-btn:hover { background-color: #2563eb; }
+.login-submit-btn:focus { box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5), 0 0 0 4px rgba(59, 130, 246, 0.2); }
+
+.login-error-message { /* bg-red-100 text-red-700 border border-red-400 px-4 py-3 rounded-md */
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #ef4444;
+    padding: 12px 16px;
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 16px; /* Tambahkan margin agar tidak terlalu dekat dengan tombol */
+}
