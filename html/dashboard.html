@@ -28,25 +28,24 @@
         <span class="card-label">VOLTAGE</span>
         <h2 id="liveVoltage" class="voltage-text">{{ data.load_voltage | default(0.0) | round(2) }} V</h2>
         <span class="label">Battery Voltage</span>
-      </div>
+    </div>
       
-      <div class="dashboard-card">
+    <div class="dashboard-card">
         <span class="card-label">CURRENT</span>
         <h2 id="liveCurrent" class="current-text">{{ data.current_mA | default(0.0) | round(2) }} mA</h2>
         <span class="label">Battery Current</span>
-      </div>
+    </div>
       
-      <div class="dashboard-card">
+    <div class="dashboard-card">
         <span class="card-label">POWER</span>
         <h2 id="livePower" class="power-text">{{ data.power_W | default(0.0) | round(2) }} W</h2>
         <span class="label">Battery Power</span>
-      </div>
+    </div>
       
-      <div class="control-section-full-row">
-        
+    <div class="control-section-full-row">
         <div class="control-card">
-          <h1 class="control-card-title">THRESHOLD CONTROL (Digipot)</h1>
-          <form id="digipotControlForm" class="control-form">
+            <h1 class="control-card-title">THRESHOLD CONTROL (Digipot)</h1>
+            <form id="digipotControlForm" class="control-form">
             <div class="form-group">
                 <label for="digipot_slider" class="control-label">Wiper Position (0-99):</label>
                 <input type="range" id="digipot_slider" name="digipot_step"
@@ -54,14 +53,12 @@
                         value="{{ data.target_digipot_step | default(50) }}" class="slider-input">
                 <output id="digipotOutput" class="digipot-text range-output">{{ data.target_digipot_step | default(50) | round(0) }}</output>
             </div>
-            
             <button type="submit" class="submit-btn">
                 Set Digipot
             </button>
             <span id="digipotControlMessage" class="message-span"></span>
-          </form>
+            </form>
         </div>
-        
         <div class="control-card">
             <h1 class="control-card-title">POWER CONTROL (Relay)</h1>
             <div class="relay-control-content">
@@ -81,11 +78,21 @@
             </div>
             <span id="relayControlMessage" class="message-span"></span>
         </div>
-      </div> </div> </div> <footer class="footer">
-    <div class="footer-content">
-      Tugas Besar - Pemrograman II
+      </div> 
+
+      <div calss="graph-box">
+        <span class="card-label">GRAPH (Voltage, Current, Power)</span>
+        <div class="chart-container">
+            <canvas id="energyChart"></canvas>
+        </div>
+      </div>
     </div>
-  </footer>
+  </div>
+    <footer class="footer">
+        <div class="footer-content">
+      Tugas Besar - Pemrograman II
+        </div>
+    </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script> 
   <script>
